@@ -6,9 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "prettify": "prettier --write ."
   },
   "dependencies": {
+    "@tanstack/react-query": "^4.29.1",
     "@types/node": "18.15.11",
     "@types/react": "18.0.34",
     "@types/react-dom": "18.0.11",
@@ -19,5 +20,10 @@
     "react-dom": "18.2.0",
     "tailwindcss": "3.3.1",
     "typescript": "5.0.4"
+  },
+  "devDependencies": {
+    "prettier": "2.8.7",
+    "prettier-plugin-tailwindcss": "latest",
+    "sass": "^1.55.0"
   }
 }
