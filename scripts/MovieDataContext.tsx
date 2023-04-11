@@ -1,28 +1,30 @@
 import React, { createContext, ReactNode, useContext, useState } from 'react';
 
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
 interface Props {
   children: ReactNode;
 }
 
 interface MovieResponseInterface {
-  title: string;
-  year: string;
-  rated: string;
-  released: string;
-  runtime: string;
-  genre: string;
-  director: string;
-  writer: string;
-  actors: string;
-  plot: string;
-  poster: string;
-  ratings: {
-    source: string;
-    value: string;
+  Title: string;
+  Year: string;
+  Rated: string;
+  Released: string;
+  Runtime: string;
+  Genre: string;
+  Director: string;
+  Writer: string;
+  Actors: string;
+  Plot: string;
+  Poster: string;
+  Ratings: {
+    Source: string;
+    Value: string;
   }[];
-  metascore: string;
-  imdbID: string;
-  type: string;
+  Metascore: string;
+  ImdbID: string;
+  Type: string;
 }
 
 interface MovieDataInterface {
@@ -30,7 +32,10 @@ interface MovieDataInterface {
     movieName: string;
     setMovieName: (movieName: string) => void;
   };
-  foundMovie?: MovieResponseInterface;
+  foundMovie: {
+    movie: MovieResponseInterface | null;
+    setMovie: (movie: MovieResponseInterface | null) => void;
+  };
 }
 
 const MovieDataContext = createContext({} as MovieDataInterface);
@@ -41,38 +46,25 @@ export function useMovieDataContext() {
 
 export function MovieDataProvider({ children }: Props) {
   const [searchedMovieName, setSearchedMovieName] = useState('');
-
-  // TODO: dummy data
-  const foundMovie: MovieResponseInterface = {
-    title: 'The Matrix',
-    year: '1999',
-    rated: 'R',
-    released: '31 Mar 1999',
-    runtime: '136 min',
-    genre: 'Action, Sci-Fi',
-    director: 'Lana Wachowski, Lilly Wachowski',
-    writer: 'Lilly Wachowski, Lana Wachowski',
-    actors: 'Keanu Reeves, Laurence Fishburne, Carrie-Anne Moss, Hugo Weaving',
-    plot: 'A computer hacker learns from mysterious rebels about the true nature of his reality and his role in the war against its controllers.',
-    poster: 'https://m.media-amazon.com/images/M/MV5BNzQzOTk3OTAtNDQ0Zi00ZTVkLWI0MTEtMDllZjNkYzNjNTc4L2ltYWdlXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SX300.jpg',
-    ratings: [
-      {
-        source: 'Internet Movie Database',
-        value: '8.7/10',
-      },
-    ],
-    metascore: '73',
-    imdbID: 'tt0133093',
-    type: 'movie',
-  }
+  const [foundMovie, setFoundMovie] = useState<MovieResponseInterface | null>(null);
+  const queryClient = new QueryClient();
 
   const value: MovieDataInterface = {
     search: {
       movieName: searchedMovieName,
       setMovieName: (movieName: string) => setSearchedMovieName(movieName),
     },
-    foundMovie,
+    foundMovie: {
+      movie: foundMovie,
+      setMovie: (movie: MovieResponseInterface | null) => setFoundMovie(movie),
+    },
   };
 
-  return <MovieDataContext.Provider value={value}>{children}</MovieDataContext.Provider>;
+  return (
+    <>
+      <QueryClientProvider client={queryClient}>
+        <MovieDataContext.Provider value={value}>{children}</MovieDataContext.Provider>
+      </QueryClientProvider>
+    </>
+  );
 }
