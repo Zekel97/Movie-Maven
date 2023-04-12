@@ -77,12 +77,9 @@ export default function UserPageBody() {
           <div className={styles.duration}>
             <span>Total time: </span>
             <span>
-              {(totalMoviesCount !== 0 && normalizeRuntime(totalMovieRuntime) === '0 minutes')
-              ?
-                'The movies in your list have no runtime'
-              :
-                normalizeRuntime(totalMovieRuntime)
-              }
+              {totalMoviesCount !== 0 && normalizeRuntime(totalMovieRuntime) === '0 minutes'
+                ? 'The movies in your list have no runtime'
+                : normalizeRuntime(totalMovieRuntime)}
             </span>
           </div>
         </div>

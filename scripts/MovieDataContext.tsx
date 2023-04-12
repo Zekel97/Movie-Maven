@@ -70,17 +70,14 @@ interface MovieDataInterface {
   };
   local: {
     removeMovieFromLocalStorage: (movieImdb: string, type: Tabs) => void;
-    toggleMovieInLocalStorage: (
-      movie: { imdbID: string; title: string; runtime: string },
-      type: Tabs,
-    ) => void;
+    toggleMovieInLocalStorage: (movie: { imdbID: string; title: string; runtime: string }, type: Tabs) => void;
     isMovieInLocalStorage: (movieImdb: string, type: Tabs) => boolean;
     localMovies: LocalMoviesInterface;
   };
 }
 
 const tabs = ['seen', 'watchlist'] as const;
-export type Tabs = typeof tabs[number];
+export type Tabs = (typeof tabs)[number];
 
 const MovieDataContext = createContext({} as MovieDataInterface);
 
@@ -109,6 +106,11 @@ export function MovieDataProvider({ children }: Props) {
 
   const addMovieToLocalStorage = (movie: { imdbID: string; title: string; runtime: string }, type: Tabs) => {
     const localMovies = fetchLocalMovies();
+
+    if (type === 'seen' && localMovies.watchlist[movie.imdbID]) {
+      delete localMovies.watchlist[movie.imdbID];
+    }
+
     localMovies[type][movie.imdbID] = {
       title: movie.title,
       duration: movie.runtime,
@@ -133,10 +135,7 @@ export function MovieDataProvider({ children }: Props) {
     return localMovies[type][movieImdb] ? true : false;
   };
 
-  const toggleMovieInLocalStorage = (
-    movie: { imdbID: string; title: string; runtime: string },
-    type: Tabs,
-  ) => {
+  const toggleMovieInLocalStorage = (movie: { imdbID: string; title: string; runtime: string }, type: Tabs) => {
     if (isMovieInLocalStorage(movie.imdbID, type)) {
       removeMovieFromLocalStorage(movie.imdbID, type);
       return;
