@@ -2,10 +2,14 @@ import { useState } from 'react';
 import styles from './header.module.scss';
 
 import { useMovieDataContext } from '@/scripts/MovieDataContext';
+import { useRouter } from 'next/router';
 
 export default function Header() {
   const [searchValue, setSearchValue] = useState('');
   const { search } = useMovieDataContext();
+
+  const router = useRouter();
+  const isUserPage = router.pathname === '/user-page';
 
   const handleSearch = () => {
     search.setMovieName(searchValue);
@@ -13,7 +17,9 @@ export default function Header() {
 
   return (
     <nav className={styles.navbar}>
-      <h1>Movie Maven</h1>
+      <a href={'/'} className={styles.title}>
+        Movie Maven
+      </a>
 
       <div className={styles.search}>
         <input
@@ -24,6 +30,9 @@ export default function Header() {
         />
         <button onClick={handleSearch}>Search</button>
       </div>
+      <a href="/user-page" className={`${styles.userPage} ${isUserPage ? styles.activePage : styles.notActivePage}`}>
+        User page
+      </a>
     </nav>
   );
 }
