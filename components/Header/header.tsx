@@ -13,6 +13,10 @@ export default function Header() {
 
   const handleSearch = () => {
     search.setMovieName(searchValue);
+
+    if (router.pathname !== '/') {
+      router.push('/');
+    }
   };
 
   return (

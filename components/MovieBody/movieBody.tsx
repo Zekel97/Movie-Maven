@@ -8,13 +8,7 @@ import { useQueryFetch } from '@/scripts/utils/QueryUtils';
 import Button from '../Button/button';
 
 export default function MovieBody() {
-  const { foundMovie, search } = useMovieDataContext();
-
-  {/* TODO: add real data */}
-  const movieUserInfo = {
-    seen: true,
-    watchlist: false,
-  };
+  const { foundMovie, search, local } = useMovieDataContext();
 
   const movieData = useQuery(
     useQueryFetch(
@@ -72,8 +66,36 @@ export default function MovieBody() {
               </div>
             )}
             <div className={styles.userActions}>
-              <Button onClick={() => {}}>{!movieUserInfo.seen ? 'Seen' : 'Not Seen'}</Button>
-              <Button onClick={() => {}}>{!movieUserInfo.watchlist ? 'Add to Watchlist' : 'Remove from Watchlist'}</Button>
+              <Button
+                onClick={() =>
+                  local.toggleMovieInLocalStorage(
+                    {
+                      imdbID: foundMovie.movie!.imdbID,
+                      title: foundMovie.movie!.Title,
+                      runtime: foundMovie.movie!.Runtime,
+                    },
+                    'seen',
+                  )
+                }
+              >
+                {!local.isMovieInLocalStorage(foundMovie.movie!.imdbID, 'seen') ? 'Seen' : 'Not Seen'}
+              </Button>
+              <Button
+                onClick={() =>
+                  local.toggleMovieInLocalStorage(
+                    {
+                      imdbID: foundMovie.movie!.imdbID,
+                      title: foundMovie.movie!.Title,
+                      runtime: foundMovie.movie!.Runtime,
+                    },
+                    'watchlist',
+                  )
+                }
+              >
+                {!local.isMovieInLocalStorage(foundMovie.movie!.imdbID, 'watchlist')
+                  ? 'Add to Watchlist'
+                  : 'Remove from Watchlist'}
+              </Button>
             </div>
           </div>
 

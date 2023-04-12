@@ -1,4 +1,4 @@
-import React, { createContext, ReactNode, useContext, useState } from 'react';
+import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
@@ -44,6 +44,21 @@ export interface NYTimesMovieInterface {
   };
 }
 
+interface LocalMoviesInterface {
+  seen: {
+    [key: string]: {
+      title: string;
+      duration: string;
+    };
+  };
+  watchlist: {
+    [key: string]: {
+      title: string;
+      duration: string;
+    };
+  };
+}
+
 interface MovieDataInterface {
   search: {
     movieName: string;
@@ -53,7 +68,19 @@ interface MovieDataInterface {
     movie: MovieResponseInterface | null;
     setMovie: (movie: MovieResponseInterface | null) => void;
   };
+  local: {
+    removeMovieFromLocalStorage: (movieImdb: string, type: Tabs) => void;
+    toggleMovieInLocalStorage: (
+      movie: { imdbID: string; title: string; runtime: string },
+      type: Tabs,
+    ) => void;
+    isMovieInLocalStorage: (movieImdb: string, type: Tabs) => boolean;
+    localMovies: LocalMoviesInterface;
+  };
 }
+
+const tabs = ['seen', 'watchlist'] as const;
+export type Tabs = typeof tabs[number];
 
 const MovieDataContext = createContext({} as MovieDataInterface);
 
@@ -62,9 +89,65 @@ export function useMovieDataContext() {
 }
 
 export function MovieDataProvider({ children }: Props) {
+  const LOCAL_STORAGE_KEY = 'localMovies';
   const [searchedMovieName, setSearchedMovieName] = useState('');
   const [foundMovie, setFoundMovie] = useState<MovieResponseInterface | null>(null);
+  const [localMovies, setLocalMovies] = useState<LocalMoviesInterface>({ seen: {}, watchlist: {} });
   const queryClient = new QueryClient();
+
+  const fetchLocalMovies = () => {
+    const localStorageData = localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (localStorageData) {
+      return JSON.parse(localStorageData) as LocalMoviesInterface;
+    }
+
+    return {
+      seen: {},
+      watchlist: {},
+    };
+  };
+
+  const addMovieToLocalStorage = (movie: { imdbID: string; title: string; runtime: string }, type: Tabs) => {
+    const localMovies = fetchLocalMovies();
+    localMovies[type][movie.imdbID] = {
+      title: movie.title,
+      duration: movie.runtime,
+    };
+
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(localMovies));
+    setLocalMovies(localMovies);
+  };
+
+  const removeMovieFromLocalStorage = (movieImdb: string, type: Tabs) => {
+    const localMovies = fetchLocalMovies();
+    if (localMovies[type][movieImdb]) {
+      delete localMovies[type][movieImdb];
+    }
+
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(localMovies));
+    setLocalMovies(localMovies);
+  };
+
+  const isMovieInLocalStorage = (movieImdb: string, type: Tabs) => {
+    const localMovies = fetchLocalMovies();
+    return localMovies[type][movieImdb] ? true : false;
+  };
+
+  const toggleMovieInLocalStorage = (
+    movie: { imdbID: string; title: string; runtime: string },
+    type: Tabs,
+  ) => {
+    if (isMovieInLocalStorage(movie.imdbID, type)) {
+      removeMovieFromLocalStorage(movie.imdbID, type);
+      return;
+    }
+
+    addMovieToLocalStorage(movie, type);
+  };
+
+  useEffect(() => {
+    setLocalMovies(fetchLocalMovies());
+  }, []);
 
   const value: MovieDataInterface = {
     search: {
@@ -74,6 +157,12 @@ export function MovieDataProvider({ children }: Props) {
     foundMovie: {
       movie: foundMovie,
       setMovie: (movie: MovieResponseInterface | null) => setFoundMovie(movie),
+    },
+    local: {
+      removeMovieFromLocalStorage,
+      toggleMovieInLocalStorage,
+      isMovieInLocalStorage,
+      localMovies,
     },
   };
 

@@ -1,9 +1,39 @@
-import { useState } from 'react';
 import styles from './userPageBody.module.scss';
 
+import { useState } from 'react';
+import { Tabs, useMovieDataContext } from '@/scripts/MovieDataContext';
+
 export default function UserPageBody() {
-  const tabs = ['watchlist', 'seen'] as const;
-  const [openTab, setOpenTab] = useState<'watchlist' | 'seen'>('watchlist');
+  const { local } = useMovieDataContext();
+
+  const tabs: Tabs[] = ['watchlist', 'seen'];
+  const [openTab, setOpenTab] = useState<Tabs>('watchlist');
+
+  const totalMoviesCount = Object.keys(local.localMovies[openTab]).length;
+
+  const normalizeRuntime = (runtime: number) => {
+    const hours = Math.floor(runtime / 60);
+    const minutes = runtime % 60;
+
+    if (hours === 0) {
+      return `${minutes} minutes`;
+    } else if (minutes === 0) {
+      return `${hours} hours`;
+    } else {
+      return `${hours} hours ${minutes} minutes`;
+    }
+  };
+
+  const totalMovieRuntime = Object.keys(local.localMovies[openTab]).reduce((acc, movie) => {
+    const movieDuration = local.localMovies[openTab][movie].duration;
+    const runtime = movieDuration.split(' ')[0];
+
+    if (isNaN(Number(runtime))) {
+      return acc;
+    }
+
+    return acc + Number(runtime);
+  }, 0);
 
   return (
     <div className={styles.body}>
@@ -24,12 +54,14 @@ export default function UserPageBody() {
             ))}
           </div>
           <div className={styles.list}>
-            {/* TODO: add real data */}
-            {true ? (
+            {Object.keys(local.localMovies[openTab]).length !== 0 ? (
               <ul>
-                <li>TEST</li>
-                <li>TEST</li>
-                <li>TEST</li>
+                {Object.keys(local.localMovies[openTab]).map((movie) => (
+                  <li key={local.localMovies[openTab][movie].title}>
+                    <span>{local.localMovies[openTab][movie].title}</span>
+                    <button onClick={() => local.removeMovieFromLocalStorage(movie, openTab)}>X</button>
+                  </li>
+                ))}
               </ul>
             ) : (
               <p>Nothing here yet</p>
@@ -38,14 +70,20 @@ export default function UserPageBody() {
         </div>
 
         <div className={styles.totalInfo}>
-          {/* TODO: add real data */}
           <div className={styles.movies}>
             <span>Total movies: </span>
-            <span>12</span>
+            <span>{totalMoviesCount}</span>
           </div>
           <div className={styles.duration}>
             <span>Total time: </span>
-            <span>12 hours</span>
+            <span>
+              {(totalMoviesCount !== 0 && normalizeRuntime(totalMovieRuntime) === '0 minutes')
+              ?
+                'The movies in your list have no runtime'
+              :
+                normalizeRuntime(totalMovieRuntime)
+              }
+            </span>
           </div>
         </div>
       </div>
