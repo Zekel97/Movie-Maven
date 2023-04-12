@@ -27,12 +27,13 @@ export default function Header() {
 
       <div className={styles.search}>
         <input
+          id='movie-search'
           type="search"
           placeholder="Search by movie title"
           value={searchValue}
           onChange={(e) => setSearchValue(e.target.value)}
         />
-        <button onClick={handleSearch}>Search</button>
+        <button id='search-button' onClick={handleSearch}>Search</button>
       </div>
       <a href="/user-page" className={`${styles.userPage} ${isUserPage ? styles.activePage : styles.notActivePage}`}>
         User page
