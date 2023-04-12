@@ -1,44 +1,41 @@
 import styles from './movieBody.module.scss';
 
-import axios from 'axios';
 import { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
 import { NYTimesMovieInterface, useMovieDataContext } from '@/scripts/MovieDataContext';
+import { useQueryFetch } from '@/scripts/utils/QueryUtils';
 
 export default function MovieBody() {
   const { foundMovie, search } = useMovieDataContext();
 
-  const movieData = useQuery({
-    queryKey: ['movieData', search.movieName],
-    queryFn: () =>
-      axios
-        .get(`https://www.omdbapi.com`, {
-          params: {
-            apikey: process.env.NEXT_PUBLIC_OMDB_API_KEY,
-            t: search.movieName,
-          }
-        })
-        .then((res) => res.data),
-    enabled: !!search.movieName,
-  });
+  const movieData = useQuery(
+    useQueryFetch(
+      ['movieData', search.movieName],
+      'https://www.omdbapi.com',
+      {
+        apikey: process.env.NEXT_PUBLIC_OMDB_API_KEY,
+        t: search.movieName,
+      },
+      !!search.movieName,
+    ),
+  );
 
-  const newYorkTimesData = useQuery({
-    queryKey: ['newYorkTimesData', foundMovie.movie?.Title],
-    queryFn: () =>
-      axios
-        .get(
-          `https://api.nytimes.com/svc/movies/v2/reviews/search.json`, {
-            params: {
-              query: foundMovie.movie?.Title,
-              'api-key': process.env.NEXT_PUBLIC_NYTIMES_API_KEY,
-          }
-        })
-        .then((res) => res.data),
-    enabled: !!foundMovie.movie?.Title,
-  });
+  const newYorkTimesData = useQuery(
+    useQueryFetch(
+      ['newYorkTimesData', foundMovie.movie?.Title ?? ''],
+      'https://api.nytimes.com/svc/movies/v2/reviews/search.json',
+      {
+        query: foundMovie.movie?.Title,
+        'api-key': process.env.NEXT_PUBLIC_NYTIMES_API_KEY,
+      },
+      !!foundMovie.movie?.Title,
+    ),
+  );
 
-  const nyTimesMovieData: NYTimesMovieInterface = newYorkTimesData.data?.results.find((result: any) => result.display_title.toLowerCase() === foundMovie.movie?.Title.toLowerCase());
+  const nyTimesMovieData: NYTimesMovieInterface = newYorkTimesData.data?.results.find(
+    (result: any) => result.display_title.toLowerCase() === foundMovie.movie?.Title.toLowerCase(),
+  );
 
   useEffect(() => {
     if (movieData.data && movieData.data.Response === 'True') {
@@ -57,14 +54,12 @@ export default function MovieBody() {
           <div className={styles.movieHeader}>
             <h2>{foundMovie.movie.Title}</h2>
             <p>{foundMovie.movie.Year}</p>
-            {nyTimesMovieData &&
+            {nyTimesMovieData && (
               <a href={nyTimesMovieData.link.url} target="_blank" rel="noreferrer">
                 NYTimes
               </a>
-            }
-            {(nyTimesMovieData && nyTimesMovieData.critics_pick === 1) &&
-              <p>Critics Pick!</p>
-            }
+            )}
+            {nyTimesMovieData && nyTimesMovieData.critics_pick === 1 && <p>Critics Pick!</p>}
           </div>
 
           <div className={styles.moviePoster}>
