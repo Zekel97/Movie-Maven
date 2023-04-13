@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
 import { NYTimesMovieInterface, useMovieDataContext } from '@/scripts/MovieDataContext';
-import { useQueryFetch } from '@/scripts/utils/QueryUtils';
+import { useQueryFetch } from '@utils/QueryUtils';
 import Button from '../Button/button';
 
 export default function MovieBody() {
@@ -30,7 +30,7 @@ export default function MovieBody() {
         query: foundMovie.movie?.Title,
         'api-key': process.env.NEXT_PUBLIC_NYTIMES_API_KEY,
       },
-      !!foundMovie.movie?.Title,
+      movieData.data?.Response === 'True',
     ),
   );
 
@@ -56,6 +56,8 @@ export default function MovieBody() {
 
   return (
     <div className={styles.body}>
+      {movieData.isLoading && foundMovie.movie !== null && <p className={styles.loading}>Loading...</p>}
+
       {foundMovie.movie !== undefined && foundMovie.movie !== null ? (
         <div className={styles.movie}>
           <div className={styles.movieHeader}>

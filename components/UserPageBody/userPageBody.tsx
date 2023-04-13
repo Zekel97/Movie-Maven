@@ -2,6 +2,7 @@ import styles from './userPageBody.module.scss';
 
 import { useState } from 'react';
 import { Tabs, useMovieDataContext } from '@/scripts/MovieDataContext';
+import { normalizeRuntime } from '@utils/DataUtils';
 
 export default function UserPageBody() {
   const { local } = useMovieDataContext();
@@ -10,19 +11,6 @@ export default function UserPageBody() {
   const [openTab, setOpenTab] = useState<Tabs>('watchlist');
 
   const totalMoviesCount = Object.keys(local.localMovies[openTab]).length;
-
-  const normalizeRuntime = (runtime: number) => {
-    const hours = Math.floor(runtime / 60);
-    const minutes = runtime % 60;
-
-    if (hours === 0) {
-      return `${minutes} minutes`;
-    } else if (minutes === 0) {
-      return `${hours} hours`;
-    } else {
-      return `${hours} hours ${minutes} minutes`;
-    }
-  };
 
   const totalMovieRuntime = Object.keys(local.localMovies[openTab]).reduce((acc, movie) => {
     const movieDuration = local.localMovies[openTab][movie].duration;
