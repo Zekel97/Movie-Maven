@@ -1,0 +1,70 @@
+@import '@/styles/mixins';
+
+.navbar {
+  @apply grid gap-4;
+  @apply w-full;
+  grid-template:
+    'logo user' 3rem
+    'nav  nav' max-content / 1fr 3rem;
+
+  @apply p-4;
+
+  .title {
+    grid-area: logo;
+    @apply text-4xl;
+    @apply font-bold;
+    @apply hover:text-orange-800;
+  }
+
+  .search {
+    grid-area: nav;
+    @apply flex flex-row justify-between gap-4;
+    @apply w-full;
+
+    input {
+      @apply w-full;
+      @apply px-4 py-3;
+      @apply rounded-md border border-orange-900;
+      @apply placeholder:text-orange-900/50;
+      @apply bg-transparent;
+      @apply text-xl;
+    }
+
+    button {
+      @include buttonStyle;
+    }
+  }
+
+  .userPage {
+    grid-area: user;
+    @apply flex items-center justify-center;
+    @apply p-4;
+    @apply h-12 w-12;
+    @apply rounded-md border border-orange-900;
+    @apply hover:shadow-md;
+    @apply hover:bg-orange-900/[0.1];
+
+    &.activePage {
+      @apply bg-orange-900;
+      @apply text-orange-100;
+      @apply border-orange-100;
+    }
+  }
+}
+
+@media (min-width: 970px) {
+  .navbar {
+    @apply items-center gap-8;
+    grid-template: 'logo . nav user' auto / max-content auto max-content max-content;
+
+    @apply px-6 py-8;
+
+    .title {
+      @apply text-5xl;
+    }
+
+    .userPage {
+      @apply h-full;
+    }
+  }
+}

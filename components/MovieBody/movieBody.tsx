@@ -10,6 +10,8 @@ import Button from '../Button/button';
 export default function MovieBody() {
   const { foundMovie, search, local } = useMovieDataContext();
 
+  const favorites = ['Shrek', 'The Matrix', 'Wolf of Wall Street'];
+
   const movieData = useQuery(
     useQueryFetch(
       ['movieData', search.movieName],
@@ -56,9 +58,9 @@ export default function MovieBody() {
 
   return (
     <div className={styles.body}>
-      {movieData.isLoading && foundMovie.movie !== null && <p className={styles.loading}>Loading...</p>}
-
-      {foundMovie.movie !== undefined && foundMovie.movie !== null ? (
+      {movieData.isLoading && foundMovie.movie !== null ? (
+        <p className={styles.loading}>Loading...</p>
+      ) : foundMovie.movie !== undefined && foundMovie.movie !== null ? (
         <div className={styles.movie}>
           <div className={styles.movieHeader}>
             <div className={styles.title}>
@@ -68,7 +70,7 @@ export default function MovieBody() {
             {nyTimesMovieData && (
               <div className={styles.nyTimes}>
                 <a href={nyTimesMovieData.link.url} target="_blank" rel="noreferrer">
-                  NYTimes
+                  NYTimes Review
                 </a>
                 {nyTimesMovieData.critics_pick === 1 && <p>Critics Pick!</p>}
               </div>
@@ -161,12 +163,20 @@ export default function MovieBody() {
           </div>
         </div>
       ) : foundMovie.movie === undefined ? (
-        <div className={styles.noMovie}>
+        <div className={styles.noFound}>
           <h2>No movie found</h2>
         </div>
       ) : (
         <div className={styles.noMovie}>
           <h2>Search a movie!</h2>
+          <p>Or choose between our favorites:</p>
+          <ul>
+            {favorites.map((favorite) => (
+              <li key={favorite}>
+                <button onClick={() => search.setMovieName(favorite)}>{favorite}</button>
+              </li>
+            ))}
+          </ul>
         </div>
       )}
     </div>

@@ -1,11 +1,12 @@
 import styles from './userPageBody.module.scss';
 
 import { useState } from 'react';
+
 import { Tabs, useMovieDataContext } from '@/scripts/MovieDataContext';
 import { normalizeRuntime } from '@utils/DataUtils';
 
 export default function UserPageBody() {
-  const { local } = useMovieDataContext();
+  const { local, search } = useMovieDataContext();
 
   const tabs: Tabs[] = ['watchlist', 'seen'];
   const [openTab, setOpenTab] = useState<Tabs>('watchlist');

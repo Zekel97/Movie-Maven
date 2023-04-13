@@ -1,0 +1,101 @@
+@import '@/styles/mixins';
+
+.body {
+  @apply p-4;
+
+  h1 {
+    @apply text-4xl;
+    @apply font-bold;
+  }
+
+  .bodyArea {
+    @apply flex flex-col gap-4;
+    @apply mt-4;
+
+    .moviesList {
+      .tabs {
+        @apply flex flex-row;
+
+        .tab {
+          @apply w-full;
+          @apply p-4;
+          @apply uppercase;
+
+          &.activeTab {
+            @apply font-bold;
+            @apply bg-orange-900/[0.1];
+            @apply border border-l-orange-900 border-r-orange-900 border-t-orange-900;
+            @apply rounded-t-md;
+          }
+
+          &.notActiveTab {
+            @apply rounded-t-md;
+            @apply hover:bg-orange-800/[0.1];
+          }
+        }
+      }
+
+      .list {
+        @apply p-4;
+        @apply rounded-b-md border border-orange-900;
+
+        ul {
+          @apply flex flex-col gap-4;
+
+          li {
+            @apply flex flex-row items-center justify-between;
+
+            span {
+              @apply text-xl;
+              @apply font-bold;
+            }
+
+            button {
+              @include buttonStyle;
+
+              & * {
+                @apply stroke-orange-900;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .totalInfo {
+      @apply flex flex-col gap-2;
+      @apply p-4;
+      @apply rounded-md border border-orange-900;
+
+      & > div {
+        span {
+          @apply text-lg;
+
+          &:first-of-type {
+            @apply font-bold;
+            @apply text-xl;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (min-width: 970px) {
+  .body {
+    .bodyArea {
+      @apply w-full;
+      @apply grid grid-cols-2;
+
+      & > div {
+        @apply w-full;
+        @apply h-max;
+      }
+
+      .totalInfo {
+        @apply sticky;
+        @apply top-8;
+      }
+    }
+  }
+}

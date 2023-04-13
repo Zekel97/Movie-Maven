@@ -1,3 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+html {
+  @apply bg-orange-100;
+}
+
+main {
+  @apply h-screen;
+  @apply bg-orange-100;
+  @apply text-orange-900;
+}

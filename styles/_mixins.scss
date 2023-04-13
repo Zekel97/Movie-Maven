@@ -1,0 +1,6 @@
+@mixin buttonStyle {
+  @apply p-4;
+  @apply rounded-md border border-orange-900;
+  @apply hover:shadow-md disabled:hover:shadow-none;
+  @apply hover:bg-orange-900/[0.1] disabled:hover:bg-transparent;
+}

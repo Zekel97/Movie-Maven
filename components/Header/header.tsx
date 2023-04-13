@@ -1,8 +1,10 @@
-import { useState } from 'react';
 import styles from './header.module.scss';
 
-import { useMovieDataContext } from '@/scripts/MovieDataContext';
+import { useState } from 'react';
 import { useRouter } from 'next/router';
+import { FaUserAlt } from 'react-icons/fa';
+
+import { useMovieDataContext } from '@/scripts/MovieDataContext';
 
 export default function Header() {
   const [searchValue, setSearchValue] = useState('');
@@ -37,8 +39,8 @@ export default function Header() {
           Search
         </button>
       </div>
-      <a href="/user-page" className={`${styles.userPage} ${isUserPage ? styles.activePage : styles.notActivePage}`}>
-        User page
+      <a href="/user-page" className={`${styles.userPage} ${isUserPage && styles.activePage}`}>
+        <FaUserAlt />
       </a>
     </nav>
   );
