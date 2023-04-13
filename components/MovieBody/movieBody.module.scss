@@ -69,13 +69,14 @@
       @apply flex justify-center;
       @apply w-full;
       @apply h-max;
+      aspect-ratio: 2/3;
       @apply bg-stone-600;
       @apply rounded-md;
 
       img {
         @apply w-full;
         @apply h-full;
-        @apply object-contain;
+        @apply object-cover;
         @apply rounded-md;
       }
     }

@@ -3,14 +3,14 @@ import styles from './movieBody.module.scss';
 import { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
-import { NYTimesMovieInterface, useMovieDataContext } from '@/scripts/MovieDataContext';
+import { NYTimesMovieInterface, Tabs, useMovieDataContext } from '@/scripts/MovieDataContext';
 import { useQueryFetch } from '@utils/QueryUtils';
 import Button from '../Button/button';
 
+const favorites = ['Shrek', 'The Matrix', 'Wolf of Wall Street'];
+
 export default function MovieBody() {
   const { foundMovie, search, local } = useMovieDataContext();
-
-  const favorites = ['Shrek', 'The Matrix', 'Wolf of Wall Street'];
 
   const movieData = useQuery(
     useQueryFetch(
@@ -39,6 +39,17 @@ export default function MovieBody() {
   const nyTimesMovieData: NYTimesMovieInterface = newYorkTimesData.data?.results.find(
     (result: any) => result.display_title.toLowerCase() === foundMovie.movie?.Title.toLowerCase(),
   );
+
+  const toggleUserActions = (type: Tabs) => {
+    local.toggleMovieInLocalStorage(
+      {
+        imdbID: foundMovie.movie!.imdbID,
+        title: foundMovie.movie!.Title,
+        runtime: foundMovie.movie!.Runtime,
+      },
+      type,
+    );
+  };
 
   useEffect(() => {
     if (movieData.data && movieData.data.Response === 'True') {
@@ -76,32 +87,10 @@ export default function MovieBody() {
               </div>
             )}
             <div className={styles.userActions}>
-              <Button
-                onClick={() =>
-                  local.toggleMovieInLocalStorage(
-                    {
-                      imdbID: foundMovie.movie!.imdbID,
-                      title: foundMovie.movie!.Title,
-                      runtime: foundMovie.movie!.Runtime,
-                    },
-                    'seen',
-                  )
-                }
-              >
+              <Button onClick={() => toggleUserActions('seen')}>
                 {!local.isMovieInLocalStorage(foundMovie.movie!.imdbID, 'seen') ? 'Seen' : 'Not Seen'}
               </Button>
-              <Button
-                onClick={() =>
-                  local.toggleMovieInLocalStorage(
-                    {
-                      imdbID: foundMovie.movie!.imdbID,
-                      title: foundMovie.movie!.Title,
-                      runtime: foundMovie.movie!.Runtime,
-                    },
-                    'watchlist',
-                  )
-                }
-              >
+              <Button onClick={() => toggleUserActions('watchlist')}>
                 {!local.isMovieInLocalStorage(foundMovie.movie!.imdbID, 'watchlist')
                   ? 'Add to Watchlist'
                   : 'Remove from Watchlist'}
