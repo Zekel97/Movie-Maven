@@ -13,7 +13,7 @@ export default function MovieBody() {
   const movieData = useQuery(
     useQueryFetch(
       ['movieData', search.movieName],
-      'https://www.omdbapi.com',
+      process.env.NEXT_PUBLIC_OMDB_URL ?? '',
       {
         apikey: process.env.NEXT_PUBLIC_OMDB_API_KEY,
         t: search.movieName,
@@ -25,7 +25,7 @@ export default function MovieBody() {
   const newYorkTimesData = useQuery(
     useQueryFetch(
       ['newYorkTimesData', foundMovie.movie?.Title ?? ''],
-      'https://api.nytimes.com/svc/movies/v2/reviews/search.json',
+      process.env.NEXT_PUBLIC_NYTIMES_URL ?? '',
       {
         query: foundMovie.movie?.Title,
         'api-key': process.env.NEXT_PUBLIC_NYTIMES_API_KEY,
@@ -45,12 +45,18 @@ export default function MovieBody() {
       return;
     }
 
-    foundMovie.setMovie(null);
+    foundMovie.setMovie(undefined);
   }, [movieData.data]);
+
+  useEffect(() => {
+    if (search.movieName === '') {
+      foundMovie.setMovie(null);
+    }
+  }, [search.movieName]);
 
   return (
     <div className={styles.body}>
-      {foundMovie.movie ? (
+      {foundMovie.movie !== undefined && foundMovie.movie !== null ? (
         <div className={styles.movie}>
           <div className={styles.movieHeader}>
             <div className={styles.title}>
@@ -152,9 +158,13 @@ export default function MovieBody() {
             )}
           </div>
         </div>
-      ) : (
+      ) : foundMovie.movie === undefined ? (
         <div className={styles.noMovie}>
           <h2>No movie found</h2>
+        </div>
+      ) : (
+        <div className={styles.noMovie}>
+          <h2>Search a movie!</h2>
         </div>
       )}
     </div>

@@ -65,8 +65,8 @@ interface MovieDataInterface {
     setMovieName: (movieName: string) => void;
   };
   foundMovie: {
-    movie: MovieResponseInterface | null;
-    setMovie: (movie: MovieResponseInterface | null) => void;
+    movie: MovieResponseInterface | null | undefined;
+    setMovie: (movie: MovieResponseInterface | null | undefined) => void;
   };
   local: {
     removeMovieFromLocalStorage: (movieImdb: string, type: Tabs) => void;
@@ -88,7 +88,7 @@ export function useMovieDataContext() {
 export function MovieDataProvider({ children }: Props) {
   const LOCAL_STORAGE_KEY = 'localMovies';
   const [searchedMovieName, setSearchedMovieName] = useState('');
-  const [foundMovie, setFoundMovie] = useState<MovieResponseInterface | null>(null);
+  const [foundMovie, setFoundMovie] = useState<MovieResponseInterface | null | undefined>(null);
   const [localMovies, setLocalMovies] = useState<LocalMoviesInterface>({ seen: {}, watchlist: {} });
   const queryClient = new QueryClient();
 
@@ -155,7 +155,7 @@ export function MovieDataProvider({ children }: Props) {
     },
     foundMovie: {
       movie: foundMovie,
-      setMovie: (movie: MovieResponseInterface | null) => setFoundMovie(movie),
+      setMovie: (movie: MovieResponseInterface | null | undefined) => setFoundMovie(movie),
     },
     local: {
       removeMovieFromLocalStorage,
