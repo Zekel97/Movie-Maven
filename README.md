@@ -27,3 +27,9 @@ Because I wanted to pay homage to this car and the 90's vibe: <br />
 
 Absolutely!<br />
 [Here's the Vercel link](https://movie-maven-mu.vercel.app/)
+
+## And if I want to clone it?
+
+You have to install the dependencies with `yarn`, get your APIs and add the api-keys to the `.env`. I wrote a `.env.example` you can duplicate, rename and edit. <br />
+Then you can run `yarn dev` and you're on! <br />
+If you want to run the tests, just use `yarn cypress`
