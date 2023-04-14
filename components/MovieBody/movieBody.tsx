@@ -36,9 +36,10 @@ export default function MovieBody() {
     ),
   );
 
-  const nyTimesMovieData: NYTimesMovieInterface = newYorkTimesData.data?.results.find(
-    (result: any) => result.display_title.toLowerCase() === foundMovie.movie?.Title.toLowerCase(),
-  );
+  const nyTimesMovieData: NYTimesMovieInterface =
+    newYorkTimesData?.data?.results?.find(
+      (result: any) => result.display_title.toLowerCase() === (foundMovie.movie?.Title || '').toLowerCase(),
+    ) || false;
 
   const toggleUserActions = (type: Tabs) => {
     local.toggleMovieInLocalStorage(
