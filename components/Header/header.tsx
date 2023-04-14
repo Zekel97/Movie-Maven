@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import { FaUserAlt } from 'react-icons/fa';
 
 import { useMovieDataContext } from '@/scripts/MovieDataContext';
+import Link from 'next/link';
 
 export default function Header() {
   const [searchValue, setSearchValue] = useState('');
@@ -23,9 +24,9 @@ export default function Header() {
 
   return (
     <nav className={styles.navbar}>
-      <a href={'/'} className={styles.title}>
+      <Link href={'/'} className={styles.title}>
         Movie Maven
-      </a>
+      </Link>
 
       <div className={styles.search}>
         <input
@@ -39,9 +40,9 @@ export default function Header() {
           Search
         </button>
       </div>
-      <a href="/user-page" className={`${styles.userPage} ${isUserPage && styles.activePage}`}>
+      <Link href="/user-page" className={`${styles.userPage} ${isUserPage && styles.activePage}`}>
         <FaUserAlt />
-      </a>
+      </Link>
     </nav>
   );
 }
